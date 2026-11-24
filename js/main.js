@@ -1,37 +1,31 @@
 'use strict';
-const year = document.querySelector('#year');
-if (year) year.textContent = String(new Date().getFullYear());
 
-const toggle = document.querySelector('#menu-toggle');
-const links = document.querySelectorAll('.menu a');
+const menuToggle = document.querySelector('#menu-toggle');
+const menuLinks = document.querySelectorAll('.menu a');
+const year = document.querySelector('#year');
+
+if (year) year.textContent = new Date().getFullYear();
+
 function closeMenu() {
-  if (!toggle) return;
-  toggle.checked = false;
-  toggle.setAttribute('aria-expanded', 'false');
+  if (!menuToggle) return;
+  menuToggle.checked = false;
+  menuToggle.setAttribute('aria-expanded', 'false');
 }
-if (toggle) {
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.addEventListener('change', () => toggle.setAttribute('aria-expanded', String(toggle.checked)));
+
+if (menuToggle) {
+  menuToggle.setAttribute('aria-expanded', 'false');
+  menuToggle.addEventListener('change', () => {
+    menuToggle.setAttribute('aria-expanded', String(menuToggle.checked));
+  });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') closeMenu();
   });
 }
-links.forEach(link => link.addEventListener('click', closeMenu));
 
-const sections = document.querySelectorAll('main [id]');
-if ('IntersectionObserver' in window && sections.length) {
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const active = document.querySelector(`.menu a[href="#${entry.target.id}"]`);
-      if (!active) return;
-      links.forEach(link => {
-        const selected = link === active;
-        link.classList.toggle('active', selected);
-        if (selected) link.setAttribute('aria-current', 'location');
-        else link.removeAttribute('aria-current');
-      });
-    });
-  }, { rootMargin: '-35% 0px -55% 0px' });
-  sections.forEach(section => observer.observe(section));
-}
+menuLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    closeMenu();
+    menuLinks.forEach(item => item.classList.remove('active'));
+    link.classList.add('active');
+  });
+});
